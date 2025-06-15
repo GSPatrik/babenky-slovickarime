@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Chat</title>
+  <!-- <style>
+    body { font-family: sans-serif; padding: 1em; }
+    #word-display-text { border: 1px solid #ccc; height: 200px; overflow-y: scroll; padding: 0.5em; margin-bottom: 1em; }
+    #word { width: 80%; }
+  </style> -->
+  <link rel="stylesheet" href="index.css">
+
+</head>
+<body>
+  <input id="username" placeholder="Username" style="display: none;" />
+  <input id="roomCode" placeholder="Room code (e.g. abcde)" style="display: none;" />
+  <button id="joinBtn" style="display: none;"> Join</button>
+  <div class="container" id="container">
+
+
+    <!-- <button class="close-btn">x</button> -->
+    <div class="image-row">
+        <img src="Products .png" alt="Face 1" class="placeholder-image">
+        <img src="Products .png" alt="Face 2" class="placeholder-image">
+        <img src="Products .png" alt="Face 3" class="placeholder-image">
+        <p>Serving :</p>
+        <img src="Products .png" alt="Face 4" class="placeholder-image">
+    </div>
+    
+    <h1 id="story-name">Name</h1>
+    <!-- <input type="text" id="roomCodeB"> -->
+    <!-- <p id="change">Users:</p>
+      <ul id="user-list"></ul> -->
+    
+    <div class="word-display">
+        <p id="word-display-text"></p>
+    </div>
+    
+    <!-- <div class="turns" id="turns">
+        <p id="wait-turn"></p>
+    </div> -->
+
+    <div class="input-words" id="input-words">
+        <button class="submit-btn" id="nSenSub">New sentence</button>
+        <form id="chat-form">
+          <input type="text" id="word" autocomplete="off" placeholder="Write here..." autofocus/>
+          <button type="submit" id="sendbtn">Send</button>
+        </form>
+    </div>
+
+    <!-- START BUTTON: Only visible for admin, hidden for others -->
+
+    <button class="stop-writing" id="stop-writing" onclick="stopWritingFunc()">Stop writing</button>
+
+
+</div>
+
+
+  
+
+
+</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  
+  <script>
+    const socket = io();
+    let canPlay = false;
+    let joined = false;
+
+    const usernameInput = document.getElementById("username");
+    const roomCodeInput = document.getElementById("roomCode");
+    const joinBtn = document.getElementById("joinBtn");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("word");
+    const messages = document.getElementById("word-display-text");
+    const stop = document.getElementById("stop-writing");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+    const roomCode = urlParams.get('room');
+    const storyName = urlParams.get('storyName');
+    const admin = urlParams.get('admin');
+
+
+    console.log("Username:", username, "Room Code:", roomCode, "Story Name:", storyName);
+
+    if (admin === "true") {
+      stop.style.display = "block";
+    }6
+
+    stop.onclick = () => {
+      console.log("Stop writing button clicked");
+      socket.emit("stop writing");
+    }
+
+    function playPlop() {
+      const plops = ["plop1.wav", "plop2.wav", "plop3.wav"];
+      const randomPlop = plops[Math.floor(Math.random() * plops.length)];
+      const audio = new Audio(randomPlop);
+      console.log(`Playing sound: ${randomPlop}`);
+      audio.play();
+    }
+
+    roomCodeInput.value = roomCode;
+    document.getElementById('username').value = username;
+    document.getElementById('story-name').textContent = storyName;
+
+    // if (username && roomCode) {
+    window.onload = () => {
+      if (!username || !roomCode) {
+        alert("Missing username or room code!");
+        window.location.href = "mainPage.html";
+        return;
+      }
+      joinBtn.click();
+      // console.log("Auto-joining with username:", username, "and room code:", roomCode);
+    }
+
+    joinBtn.onclick = () => {
+      const username = usernameInput.value.trim();
+      const room = roomCodeInput.value.trim();
+      if (!username || !room) return;
+      socket.emit("join room", { username, roomCode: room });
+      joined = true;
+      form.style.display = "block";
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (input.value.trim() === "" || !canPlay || !joined) return;
+      socket.emit("chat message", input.value.trim());
+      input.value = "";
+    });
+
+    socket.on("chat message", (data) => {
+      // messages.innerHTML += `${data.message}</p>`;
+      // messages.scrollTop = messages.scrollHeight;
+      messages.textContent += data.message + " ";
+
+      playPlop();
+
+
+    });
+
+
+    socket.on("your turn", () => {
+      canPlay = true;
+      input.disabled = false;
+      input.placeholder = "Your turn! Write something...";
+    });
+
+    socket.on("wait turn", () => {
+      canPlay = false;
+      input.disabled = true;
+      input.placeholder = "Wait for your turn...";
+    });
+
+    // Hide chat form until joined
+    form.style.display = "none";
+
+    socket.on("stop writing", () => {
+      document.getElementById("nSenSub").style.display = "none";
+      document.getElementById("sendbtn").style.display = "none";
+      input.style.display = "none";
+      stop.style.display = "none";
+      alert("Writing has been stopped by the admin.");
+    });
+
+
+    window.addEventListener('keydown', (e) => {
+  if (e.code === "Space") {
+    e.preventDefault();
+    alert("No spaces!");
+  } else if (e.code === "Period") {
+    e.preventDefault();
+    alert("No periods!");
+  }
+  if (e.key.length === 1) {
+    input.focus();
+  }
+  });
+
+
+
+  </script>
+</body>
+</html>

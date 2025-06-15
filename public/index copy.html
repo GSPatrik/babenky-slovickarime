@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Entry Page</title>
+    <link rel="stylesheet" href="index.css">
+    
+</head>
+
+<body>
+  
+  <div class="container" id="container">
+
+    <!-- <button class="close-btn">x</button> -->
+    <div class="image-row">
+        <img src="Products .png" alt="Face 1" class="placeholder-image">
+        <img src="Products .png" alt="Face 2" class="placeholder-image">
+        <img src="Products .png" alt="Face 3" class="placeholder-image">
+        <p>Serving :</p>
+        <img src="Products .png" alt="Face 4" class="placeholder-image">
+    </div>
+    
+    <h1 id="story-name">Name</h1>
+    <input type="text" id="roomCodeB">
+    <p id="change">Users:</p>
+      <ul id="user-list"></ul>
+    
+    <div class="word-display">
+        <p id="word-display-text"></p>
+    </div>
+    
+    <div class="turns" id="turns">
+        <p id="wait-turn"></p> <!-- FIXED ID -->
+    </div>
+
+    <div class="input-words" id="input-words">
+        <button class="submit-btn" id="nSenSub">New sentence</button>
+        <div class="form">
+            <input type="text" id="word" name="word" placeholder="Enter your word" autocomplete="off" autofocus>
+            <button class="submit-btn" id="submit-btn">Submit</button>
+        </div>
+    </div>
+
+    <!-- START BUTTON: Only visible for admin, hidden for others -->
+    <button class="start-btn" id="start-game-btn" style="display:none;">START</button>
+
+    <button class="stop-writing" id="stop-writing">Stop writing</button>
+
+    <h2 id="admin-display">admin</h2>
+
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+<script>
+  
+</script>
+  
+</body>
+</html>

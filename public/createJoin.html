@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create or join a party</title>
+  <link rel="stylesheet" href="createParty.css">
+</head>
+<body>
+
+  <div class="popup">
+    <div class="popup-left">
+      <input 
+        type="text" 
+        id="storyName"
+        class="headline-input" 
+        placeholder="Zadaj meno noveho príbehu" 
+        aria-label="Headline input" >
+      <input 
+        type="text" 
+        id="username"
+        class="headline-input" 
+        placeholder="Username" 
+        aria-label="Headline input" 
+        style="display: block;"
+        >
+      <p class="headline">alebo</p>
+      <input 
+        type="text"
+        id="roomId"
+        class="headline-input" 
+        placeholder="Zadaj Room ID" 
+        aria-label="Headline input">
+
+      <div class="buttons">
+        <button class="create-btn" onclick="createRoom()">CREATE</button>
+      <button class="create-btn" onclick="joinRoom()">JOIN</button>
+      </div>
+      
+    </div>
+  <div class="btns_right">
+    <button class="exit-btn"><img src="cls_btn.png" alt="" width="60" height="60"></button>
+    <button class="gente-btn"><img src="gnte_btn.png" alt="" width="60" height="60"></button>
+    <button class="babenky-btn"><img src="bbny_btn.webp" alt="" width="70" height="60"></button>
+  </div>
+</div>
+<script>
+    function createRoom() {
+      const username = document.getElementById("username").value;
+      const storyName = document.getElementById("storyName").value;
+
+      if (!username) {
+        alert("Please enter your name.");
+        return;
+      }
+      if (!storyName) {
+        alert("Please enter a story name.");
+        return;
+      }
+
+      window.location.href = `/wait.html?username=${username}&storyName=${storyName}`;
+
+    }
+
+    function joinRoom() {
+      const username = document.getElementById("username").value;
+      const room = document.getElementById("roomId").value;
+
+      if (!username) {
+        alert("Please enter your name.");
+        return;
+      }
+      if (!room) {
+        alert("Please enter a room code.");
+        return;
+      }
+      console.log(username, room);
+      window.location.href = `/join.html?username=${username}&room=${room}`;
+    }
+  </script>
+
+</body>
+</html>

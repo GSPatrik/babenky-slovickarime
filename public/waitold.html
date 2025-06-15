@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Waiting Room (Admin)</title>
+</head>
+<body>
+  <h2>Room Code: <span id="room-code-display"></span></h2>
+  <!-- Show this only to admin -->
+  <button id="start-game-btn" style="display: none;">Start Game</button>
+
+  <h3>Users in Room:</h3>
+  
+  <ul id="user-list"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const username = new URLSearchParams(window.location.search).get('username');
+
+    socket.emit("create room", username);
+
+    socket.on("room created", ({ roomCode }) => {
+
+      localStorage.setItem("roomCode", roomCode); // 🔥 uložíme do localStorage
+      console.log("Room code set:", roomCode);
+      document.getElementById("room-code-display").textContent = roomCode;
+
+      socket.emit("join room", { username, roomCode });
+
+  });
+
+    socket.on("room info", ({ admin }) => {
+      if (username === admin) {
+        document.getElementById("start-game-btn").style.display = "block";
+      }
+    });
+
+    document.getElementById("start-game-btn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to start the game?")) {
+        socket.emit("start game");
+
+      }
+    });
+
+    socket.on("redirect to game", () => {
+      // const roomCode = localStorage.getItem("roomCode");
+      const roomCode = localStorage.getItem("roomCode");
+      window.location.href = `index.html?username=${username}&room=${roomCode}`;
+    });
+
+    socket.on("join denied", (msg) => {
+      alert(msg);
+      window.location.href = "mainPage.html";
+    });
+
+    
+
+
+    
+
+    socket.on("user list", (users) => {
+      const list = document.getElementById("user-list");
+      list.innerHTML = '';
+      users.forEach(u => {
+        const li = document.createElement("li");
+        li.textContent = u;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
