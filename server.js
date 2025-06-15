@@ -22,38 +22,49 @@ io.on("connection", (socket) => {
 
   socket.on("join room", ({ username, roomCode }) => {
     if (!rooms[roomCode]) {
-      rooms[roomCode] = { users: [], turnIndex: 0, storyName: "Default Story" };
+        rooms[roomCode] = {
+            users: [],
+            turnIndex: 0,
+            storyName: "Default Story"
+        };
     }
 
     const room = rooms[roomCode];
 
-
-    if (!room) {
-      socket.emit("room not found");
-      return;
+    // Only add user if they're not already in the room
+    const existingUserIndex = room.users.findIndex(u => u.name === username);
+    if (existingUserIndex === -1) {
+        room.users.push({ id: socket.id, name: username });
+    } else {
+        room.users[existingUserIndex].id = socket.id;
     }
-
-
-    if (!room.users.some(u => u.id === socket.id)) {
-      room.users.push({ id: socket.id, name: username });
-    }
-
-    // console.log(room)
 
     socket.join(roomCode);
     socket.roomCode = roomCode;
     socket.username = username;
 
-    // console.log(`${username} joined room ${roomCode}`);
-
+    // Send user list and story name to all users in room
     io.to(roomCode).emit("user list", room.users.map(u => u.name));
-    socket.emit("joined", { roomCode, storyName: room.storyName });
+    io.to(roomCode).emit("joined", { 
+        roomCode, 
+        storyName: room.storyName 
+    });
 
-    // ak je prvý, daj mu ťah
-    if (room.users.length === 1) {
-      io.to(room.users[0].id).emit("your turn");
-    } else {
-      socket.emit("wait turn");
+    console.log('Room:', {
+        users: room.users.map(u => u.name),
+        turnIndex: room.turnIndex,
+        storyName: room.storyName
+    });
+
+    // Assign turns
+    const currentPlayer = room.users[room.turnIndex];
+    if (currentPlayer) {
+        io.to(currentPlayer.id).emit("your turn");
+        room.users.forEach(u => {
+            if (u.id !== currentPlayer.id) {
+                io.to(u.id).emit("wait turn");
+            }
+        });
     }
   });
 
@@ -65,10 +76,11 @@ io.on("connection", (socket) => {
     // Skontroluj, či je tento hráč na rade
     const currentPlayer = room.users[room.turnIndex];
       // console.log(currentPlayer);
-      socket.emit("wait turn");
 
     if (!currentPlayer || currentPlayer.id !== socket.id) {
       // Nie je na rade, správu ignoruj alebo pošli späť správu
+      socket.emit("wait turn");
+
       return;
     }
 
@@ -85,7 +97,7 @@ io.on("connection", (socket) => {
       const nextPlayer = room.users[room.turnIndex];
       // console.log(`Next player is ${nextPlayer.name}`);
       // console.log(room.users)
-
+      
       // Nový hráč má ťah
       io.to(nextPlayer.id).emit("your turn");
 
@@ -193,6 +205,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
+server.listen(3000, '0.0.0.0', () => {
   console.log("Server beží na http://localhost:3000");
+  console.log("Server beží na http://192.168.1.21:3000");
+  
 });

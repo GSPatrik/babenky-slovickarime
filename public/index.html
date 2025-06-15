@@ -60,7 +60,7 @@
   
   <script>
     const socket = io();
-    let canPlay = false;
+    let canPlay = true;
     let joined = false;
 
     const usernameInput = document.getElementById("username");
@@ -165,7 +165,6 @@
     form.style.display = "none";
 
     socket.on("stop writing", () => {
-      document.getElementById("nSenSub").style.display = "none";
       document.getElementById("sendbtn").style.display = "none";
       input.style.display = "none";
       stop.style.display = "none";
