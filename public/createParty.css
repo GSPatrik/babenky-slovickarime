@@ -37,11 +37,14 @@ body {
 
 .popup-left {
   /* flex: 1 1 0; */
+  width: 560px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   text-align: center;
+  /* padding: 50px; */
+  padding-right: 0;
   /* padding: 40px 32px; */
   /* gap: 48px; */
 }

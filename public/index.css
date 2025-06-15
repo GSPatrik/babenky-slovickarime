@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+@font-face {
+  font-family: Elastix;
+  src: url(Elastix.otf);
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -11,6 +16,17 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+
+    background-image:
+        radial-gradient(circle at top left,     rgba(255, 255, 255, 0.952) 0%, transparent 80%),
+        radial-gradient(circle at top right,    rgba(255, 251, 0, 0.979) 0%, transparent 80%),
+        radial-gradient(circle at bottom left ,  #44236c 0%, transparent 80%),
+        radial-gradient(circle at bottom right, #2c2e8c 0%, transparent 80%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    background-color: rgb(77, 2, 79);
+  background-blend-mode: lighten;
 }
 
 h1{
@@ -94,16 +110,35 @@ input[type="text"] {
 
 .word-display{
     /* background-color: aqua; */
-    min-height: 150px;
+    min-height: 250px;
     height: auto;
-    max-height: 500px;
+    max-height: 400px;
     overflow-y:auto;
     text-align: left;
     margin-bottom: 30px;
     text-transform: uppercase;
+    margin-top: 30px;
+    padding: 10px;
+    border: 1px solid #0000002f;
+    border-radius: 8px;
+    font-size: 25px;
+
+}
+
+.word-display p {
+    margin: 15px;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.word-display-text{
+    white-space: pre-line;
 }
 
 .submit-btn {
+    font-family: Elastix, Arial, sans-serif;
     background-color: #000;
     width: 150px;
     height: 50px;
@@ -124,13 +159,6 @@ input[type="text"] {
 
 }
 
-.word-display {
-    margin-top: 30px;
-    padding: 10px;
-    border: 1px solid #0000002f;
-    border-radius: 8px;
-    min-height: 50px;
-}
 
 .input-words{
     display: flex;
@@ -143,6 +171,9 @@ input[type="text"] {
     font-size: 30px;
     text-align: left;
     color: rgb(255, 103, 103);
+}
+#story-name{
+    font-family: Elastix, Arial, sans-serif;
 }
 
 .stop-writing{

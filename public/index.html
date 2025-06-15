@@ -15,7 +15,8 @@
   <input id="username" placeholder="Username" style="display: none;" />
   <input id="roomCode" placeholder="Room code (e.g. abcde)" style="display: none;" />
   <button id="joinBtn" style="display: none;"> Join</button>
-  <div class="container" id="container">
+
+  <disv class="container" id="container">
 
 
     <!-- <button class="close-btn">x</button> -->
@@ -27,7 +28,6 @@
         <img src="Products .png" alt="Face 4" class="placeholder-image">
     </div>
     
-    <h1 id="story-name">Name</h1>
     <!-- <input type="text" id="roomCodeB"> -->
     <!-- <p id="change">Users:</p>
       <ul id="user-list"></ul> -->
@@ -39,27 +39,22 @@
     <!-- <div class="turns" id="turns">
         <p id="wait-turn"></p>
     </div> -->
+    <h1 id="story-name">Name</h1>
 
-    <div class="input-words" id="input-words">
-        <button class="submit-btn" id="nSenSub">New sentence</button>
+        <!-- <button class="submit-btn" id="nSenSub">New sentence</button> -->
         <form id="chat-form">
           <input type="text" id="word" autocomplete="off" placeholder="Write here..." autofocus/>
-          <button type="submit" id="sendbtn">Send</button>
+          <button type="submit" id="sendbtn" class="submit-btn">Send</button>
         </form>
-    </div>
+    
 
     <!-- START BUTTON: Only visible for admin, hidden for others -->
 
     <button class="stop-writing" id="stop-writing" onclick="stopWritingFunc()">Stop writing</button>
 
+    <div class="input-words" id="input-words"></div>
 
-</div>
-
-
-  
-
-
-</div>
+    </disv>
 
   <script src="/socket.io/socket.io.js"></script>
   
@@ -82,6 +77,7 @@
     const storyName = urlParams.get('storyName');
     const admin = urlParams.get('admin');
 
+    
 
     console.log("Username:", username, "Room Code:", roomCode, "Story Name:", storyName);
 
@@ -133,14 +129,23 @@
       input.value = "";
     });
 
+    let currentParagraph = document.createElement("p");
+    messages.appendChild(currentParagraph);
+
     socket.on("chat message", (data) => {
-      // messages.innerHTML += `${data.message}</p>`;
-      // messages.scrollTop = messages.scrollHeight;
-      messages.textContent += data.message + " ";
+      const word = data.message.trim();
 
-      playPlop();
-
-
+      // Ak slovo končí bodkou, ukončíme odstavec
+      if (word.endsWith(".") || word.endsWith("!") || word.endsWith("?")) {
+        currentParagraph.textContent += (currentParagraph.textContent ? " " : "") + word;
+        
+        // Vytvoríme nový odstavec pre ďalšie slová
+        currentParagraph = document.createElement("p");
+        messages.appendChild(currentParagraph);
+      } else {
+        currentParagraph.textContent += (currentParagraph.textContent ? " " : "") + word;
+      }
+      playPlop()
     });
 
 
@@ -172,9 +177,9 @@
   if (e.code === "Space") {
     e.preventDefault();
     alert("No spaces!");
-  } else if (e.code === "Period") {
-    e.preventDefault();
-    alert("No periods!");
+  // } else if (e.code === "Period") {
+    // e.preventDefault();
+    // alert("No periods!");
   }
   if (e.key.length === 1) {
     input.focus();
